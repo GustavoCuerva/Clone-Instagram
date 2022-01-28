@@ -1,0 +1,50 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    background-color: rgb(220, 220, 220);
+}
+
+.center{
+    display: flex;
+    margin: 0 auto;
+    max-width: 1100px;
+}
+
+.header{
+    padding: 10px 0;
+    background-color: white;
+    border-bottom: 2px solid rgb(230, 230, 230);
+}
+
+.header_logo{
+    width: 50%;
+}
+
+.header_login{
+    width: 50%;
+    text-align: right;
+}
+
+.header_login input[type=text],
+.header_login input[type=password]{
+    width: 180px;
+    margin-right: 5px;
+    height: 20px;
+    border: 1px solid #ccc;
+    padding-left: 10px;
+}
+
+.header_login input[type=submit]{
+    background-color: #0095f6;
+    color: white;
+    border: 0;
+    height: 20px;
+    padding: 0px 10px;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 10px;
+}
