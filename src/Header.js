@@ -1,8 +1,13 @@
 import { useEffect, useState } from "react";
-import {auth} from './firebase.js';
+import {auth, storage, db} from './firebase.js';
+import firebase from "firebase/compat/app";
 
 function Header(props) {
-  
+
+    //Criando estados do progresso e do arquivo
+    const [progress, setProgress] = useState(0);
+    const [file, setFile] = useState(null);
+
     useEffect(() =>{
     },[]);
 
@@ -61,6 +66,61 @@ function Header(props) {
       })
     }
 
+    //Abrir tela de upload
+    function abrirModalUpload(e) {
+      e.preventDefault();
+      
+      let modal = document.querySelector('.modalUpload');
+      modal.style.display = "block";
+
+    }
+
+    //Fechar tela de upload
+    function fecharModalUpload() {
+      let modal = document.querySelector('.modalUpload');
+      modal.style.display = "none";
+    }
+
+    //Fazer upload da postagem para o banco de dados
+    function uploadPost(e) {
+      e.preventDefault();
+     
+      //coletando titulo
+      let tituloPost = document.getElementById('titulo-upload').value;
+
+      //Coloca o caminho ou referencia para onde vai estar armazenado nossa foto, com o nome do arquivo
+      const uploadTask = storage.ref(`images/${file.name}`).put(file);
+
+      //Verificando onde está o upload
+      uploadTask.on('state_changed',function(snapshot) {
+        const progress = Math.round(snapshot.bytesTransferred/snapshot.totalBytes)*100;
+        setProgress(progress);
+      },function(error) {
+        //Caso ocorra erro
+      },function(params) {
+
+        //Adicionando ao banco de dados
+        storage.ref('images').child(file.name).getDownloadURL()
+        .then(function(url) {
+          db.collection('posts').add({
+            titulo: tituloPost,
+            image: url,
+            userName: props.user,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+          })
+
+          setProgress(0);
+          setFile(null);
+
+          alert('Upload realizado com sucesso');
+
+          document.getElementById('formUpload').reset();
+
+          fecharModalUpload();
+        })
+      })
+    }
+
   return (
     <div className="header">
     <div className="modalCriarConta">
@@ -72,6 +132,19 @@ function Header(props) {
           <input id="username-cadastro" type='text' placeholder="Seu username..."/>
           <input id="senha-cadastro" type='password' placeholder="Senha..."/>
           <input type='submit' value='Criar Conta!'/>
+        </form>
+      </div>
+    </div>
+
+    <div className="modalUpload">
+      <div className="formUpload">
+        <div onClick={()=>fecharModalUpload()} className="close-modal-upload">x</div>
+        <h2>Postar</h2>
+        <form onSubmit={(e)=>uploadPost(e)} id="formUpload">
+          <progress id='progressUpload' value={progress}></progress>
+          <input id="titulo-upload" type='text' placeholder="Nome da foto"/>
+          <input onChange={(e)=>setFile(e.target.files[0])} type='file' name="file"/>
+          <input type='submit' value='Publicar'/>
         </form>
       </div>
     </div>
@@ -88,7 +161,7 @@ function Header(props) {
             <span>
               Olá <b>{props.user}</b>
             </span>
-            <a href="#">Postar!</a>
+            <a onClick={(e)=>abrirModalUpload(e)}>Postar!</a>
           </div>
         : 
           <div className="header_login">
