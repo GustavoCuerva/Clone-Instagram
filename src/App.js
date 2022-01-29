@@ -5,7 +5,7 @@ import Header from './Header';
 
 function App() {
 
-  const [user, setUser] = useState("Gustavo");
+  const [user, setUser] = useState();
 
   useEffect(()=>{
 
