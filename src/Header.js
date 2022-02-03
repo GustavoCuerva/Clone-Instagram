@@ -61,8 +61,18 @@ function Header(props) {
       .then((auth)=>{
         props.setUser(auth.user.displayName);
         alert('Logado com sucesso');
+        window.location.href = '/';
       }).catch((err)=>{
         alert(err.message);
+      })
+    }
+
+    //Sair
+    function deslogar(e){
+      e.preventDefault();
+      auth.signOut().then(function(val){
+        props.setUser(null);
+        window.location.href = '/';
       })
     }
 
@@ -162,6 +172,7 @@ function Header(props) {
               Olá <b>{props.user}</b>
             </span>
             <a onClick={(e)=>abrirModalUpload(e)}>Postar!</a>
+            <a onClick={(e)=>deslogar(e)}>Sair</a>
           </div>
         : 
           <div className="header_login">
