@@ -2,6 +2,10 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## CRIE UM PROJETO NO FIREBASE
+
+Depois de criar um projeto no firebase com o nome desejado o configure para que seja uma aplicação Web e depois pegue o código fornecido e o cole no arquivo firebase.js na pasta src.
+
 ## Available Scripts
 
 In the project directory, you can run:
@@ -68,3 +72,23 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+### Regras de Segurança
+
+Em seu firebase recomendamos que utilize as seguintes regras de segurança em 'firestore database':
+    rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+   
+   match /posts/{id}{
+   	allow read: if true;
+    allow write: if request.auth.token != null;
+   }
+   
+   match /posts/{id}/comentarios/{comentId}{
+   	allow read: if true;
+    allow write: if request.auth.token != null && request.auth.token.name == request.resource.data.nome;
+   }
+   
+  }
+}
